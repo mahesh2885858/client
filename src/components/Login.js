@@ -1,12 +1,35 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const loginUser = async (e) => {
+    e.preventDefault();
+    const res = await fetch("/signin", {
+      method: "POST",
+      header: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    });
+    const data = res.json();
+    if (res.status === 100 || !data) {
+      window.alert("invalid credentials");
+    } else {
+      window.alert("login successfull");
+      navigate("/");
+    }
+  };
   return (
     <section className="login">
       <div className="login-form-container">
         <div className="login-form-title">Log In</div>
-        <form action="" className="login-form">
+        <form method="POST" className="login-form">
           <div className="login-form-item">
             <label for="email">
               <i className="zmdi zmdi-email"></i>
@@ -17,6 +40,10 @@ const Login = () => {
               name="email"
               id="email"
               placeholder="Your Email"
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+              value={email}
             />
           </div>
           <div className="login-form-item">
@@ -29,9 +56,17 @@ const Login = () => {
               name="password"
               id="password"
               placeholder="password"
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+              value={password}
             />
           </div>
-          <button type="submit" className="login-submitButton">
+          <button
+            type="submit"
+            className="login-submitButton"
+            onClick={loginUser}
+          >
             Log In
           </button>
           <NavLink to="/signup" className="login-text">

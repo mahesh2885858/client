@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -18,6 +19,7 @@ const Signup = () => {
   const postData = async (e) => {
     e.preventDefault();
     const { name, email, work, phone, password, cpassword } = user;
+
     const res = await fetch("/register", {
       method: "POST",
       headers: {
@@ -32,12 +34,14 @@ const Signup = () => {
         cpassword: cpassword,
       }),
     });
-    const data = await res.json();
+    const data = await res;
+    console.log(res);
     if (data.status === 422 || !data) {
       window.alert("invalid registration");
     } else {
       // window.alert("registered successfully");
       console.log(data);
+      navigate("/login");
     }
   };
 
